@@ -1,5 +1,4 @@
 from utils import *
-import plotly.express as px
 
 if __name__ == '__main__':
     # input docs

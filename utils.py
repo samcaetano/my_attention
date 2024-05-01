@@ -1,4 +1,5 @@
 import numpy as np
+import plotly.express as px
 
 # embedding size
 d_model = 512
