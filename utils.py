@@ -2,7 +2,11 @@ import numpy as np
 import plotly.express as px
 
 # embedding size
-d_model = 512
+d_model = 6
+
+def _softmax(x):
+    exp_scores = np.exp(x)
+    return exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
 
 def embedding(inputs : list) -> np.array:
     """
@@ -61,6 +65,19 @@ def positional_embeddings(inputs : list, type : str) -> np.array:
             PE[0, :, :],
             y=doc[0].split(),
         )
-    fig.write_html(f'{type}_positional_encoding.html')
+    fig.write_html(f'images/{type}_positional_encoding.html')
 
     return PE
+
+def scaled_dot_attention(query, key, value):
+    # matmul instead of np.dot to handle matrices greater than 2-D
+    # this captures the similarity of each word related to all other words in the sentence
+    att_similarity = np.matmul(query, key.T)
+    #print(att_similarity)
+
+    # this captures the attention to to give to each word in the sentence
+    att_weights = _softmax(att_similarity / np.sqrt(d_model))
+    #print(att_weights)
+
+    # this captures the similarity of each word attention rate to all other words in the output sentence
+    return np.matmul(att_weights, value)
